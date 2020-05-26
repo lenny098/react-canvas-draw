@@ -297,7 +297,9 @@ export default class extends PureComponent {
   };
 
   handleCanvasResize = (entries, observer) => {
-    const saveData = this.getSaveData();
+    const old_width  = this.canvas.drawing.width;
+    const old_height = this.canvas.drawing.height;
+
     for (const entry of entries) {
       const { width, height } = entry.contentRect;
       this.setCanvasSize(this.canvas.interface, width, height);
@@ -308,7 +310,11 @@ export default class extends PureComponent {
       this.drawGrid(this.ctx.grid);
       this.loop({ once: true });
     }
-    this.loadSaveData(saveData, true);
+    this.loadSaveData(JSON.stringify({
+      lines: this.lines,
+      width: old_width,
+      height: old_height,
+    }), true);
   };
 
   setCanvasSize = (canvas, width, height) => {
