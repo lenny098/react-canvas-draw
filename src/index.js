@@ -5,8 +5,6 @@ import { Catenary } from "catenary-curve";
 
 import ResizeObserver from "resize-observer-polyfill";
 
-import drawImage from "./drawImage";
-
 function midPointBtw(p1, p2) {
   return {
     x: p1.x + (p2.x - p1.x) / 2,
@@ -115,7 +113,6 @@ export default class extends PureComponent {
     );
     this.canvasObserver.observe(this.canvasContainer);
 
-    this.drawImage();
     this.loop();
 
     window.setTimeout(() => {
@@ -159,21 +156,6 @@ export default class extends PureComponent {
 
   componentWillUnmount = () => {
     this.canvasObserver.unobserve(this.canvasContainer);
-  };
-
-  drawImage = () => {
-    if (!this.props.imgSrc) return;
-
-    // Load the image
-    this.image = new Image();
-
-    // Prevent SecurityError "Tainted canvases may not be exported." #70
-    this.image.crossOrigin = "anonymous";
-
-    // Draw the image once loaded
-    this.image.onload = () =>
-      drawImage({ ctx: this.ctx.grid, img: this.image });
-    this.image.src = this.props.imgSrc;
   };
 
   undo = () => {
@@ -324,7 +306,6 @@ export default class extends PureComponent {
       this.setCanvasSize(this.canvas.grid, width, height);
 
       this.drawGrid(this.ctx.grid);
-      this.drawImage();
       this.loop({ once: true });
     }
     this.loadSaveData(saveData, true);
@@ -485,7 +466,7 @@ export default class extends PureComponent {
   };
 
   drawGrid = ctx => {
-    if (this.props.hideGrid) return;
+    if (this.props.hideGrid || this.props.imgSrc) return;
 
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
@@ -560,7 +541,10 @@ export default class extends PureComponent {
         className={this.props.className}
         style={{
           display: "block",
-          background: this.props.backgroundColor,
+          backgroundColor: this.props.backgroundColor,
+          backgroundImage: `url(${this.props.imgSrc})`,
+          backgroundPosition: "center",
+          backgroundSize: "cover",
           touchAction: "none",
           width: this.props.canvasWidth,
           height: this.props.canvasHeight,
