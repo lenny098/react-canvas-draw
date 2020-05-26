@@ -145,7 +145,9 @@ export default class extends PureComponent {
     }
 
     if (prevProps.saveData !== this.props.saveData) {
-      this.loadSaveData(this.props.saveData);
+      this.props.saveData ?
+        this.loadSaveData(this.props.saveData) :
+        this.clear();
     }
 
     if (JSON.stringify(prevProps) !== JSON.stringify(this.props)) {
