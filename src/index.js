@@ -95,6 +95,9 @@ export default class extends PureComponent {
     this.valuesChanged = true;
     this.isDrawing = false;
     this.isPressing = false;
+
+    this.old_width = props.canvasWidth;
+    this.old_height = props.canvasHeight;
   }
 
   componentDidMount() {
@@ -299,9 +302,6 @@ export default class extends PureComponent {
   };
 
   handleCanvasResize = (entries, observer) => {
-    const old_width  = this.canvas.drawing.width;
-    const old_height = this.canvas.drawing.height;
-
     for (const entry of entries) {
       const { width, height } = entry.contentRect;
       this.setCanvasSize(this.canvas.interface, width, height);
@@ -314,9 +314,12 @@ export default class extends PureComponent {
     }
     this.loadSaveData(JSON.stringify({
       lines: this.lines,
-      width: old_width,
-      height: old_height,
+      width: this.old_width,
+      height: this.old_height,
     }), true);
+
+    this.old_width = this.props.canvasWidth;
+    this.old_height = this.props.canvasHeight;
   };
 
   setCanvasSize = (canvas, width, height) => {
