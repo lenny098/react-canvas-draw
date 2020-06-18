@@ -304,6 +304,9 @@ export default class extends PureComponent {
   handleCanvasResize = (entries, observer) => {
     for (const entry of entries) {
       const { width, height } = entry.contentRect;
+
+      if (width * height === 0) return;
+
       this.setCanvasSize(this.canvas.interface, width, height);
       this.setCanvasSize(this.canvas.drawing, width, height);
       this.setCanvasSize(this.canvas.temp, width, height);
